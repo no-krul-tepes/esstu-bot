@@ -3,9 +3,9 @@
 
 import { logger } from '../utils/logger.js';
 import { parseCallbackData } from '../utils/validators.js';
-import { CallbackAction } from '../types/bot.js';
+import { CallbackAction } from '../types';
 import { handleAgreeTerms, handleDepartmentSelection, handleCourseSelection, handleGroupSelection, handleNavigateBack, handleGroupPagination } from './registration.handler.js';
-import type { BotContext } from '../types/bot.js';
+import type { BotContext } from '../types';
 
 export async function handleCallbackQuery(ctx: BotContext): Promise<void> {
     const callbackData = ctx.callbackQuery?.data;

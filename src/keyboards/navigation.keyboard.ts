@@ -3,9 +3,9 @@
 
 import { InlineKeyboard } from 'grammy';
 import { APP_CONFIG, EMOJI, COURSES } from '../config/constants.js';
-import { CallbackAction } from '../types/bot.js';
-import type { Department, Group } from '../types/database.js';
-import type { PaginatedResult } from '../types/bot.js';
+import { CallbackAction } from '../types';
+import type { Department, Group } from '../types';
+import type { PaginatedResult } from '../types';
 
 export function createTermsKeyboard(): InlineKeyboard {
     return new InlineKeyboard().text(
@@ -108,6 +108,7 @@ export function createGroupsKeyboard(
     return keyboard;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function createBackKeyboard(): InlineKeyboard {
     return new InlineKeyboard().text(
         `${EMOJI.BACK} Вернуться`,

@@ -1,14 +1,14 @@
 // src/utils/image-generator.ts
 // Генерация изображений расписания с использованием @napi-rs/canvas
 
-import { createCanvas } from '@napi-rs/canvas';
-import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
-import { APP_CONFIG } from '../config/constants.js';
-import { getWeekTypeLabel } from './week-calculator.js';
-import { logger } from './logger.js';
-import { ImageGenerationError } from '../types';
-import type { ScheduleImageData, DaySchedule, LessonDisplay } from '../types';
+import {createCanvas} from '@napi-rs/canvas';
+import {format} from 'date-fns';
+import {ru} from 'date-fns/locale';
+import {APP_CONFIG} from '../config/constants.js';
+import {getWeekTypeLabel} from './week-calculator.js';
+import {logger} from './logger.js';
+import type {DaySchedule, LessonDisplay, ScheduleImageData} from '../types';
+import {ImageGenerationError} from '../types';
 
 interface CanvasConfig {
     width: number;
@@ -55,8 +55,7 @@ export async function generateScheduleImage(data: ScheduleImageData): Promise<Bu
         });
 
         const totalLessons = data.lessons.reduce((sum, day) => sum + day.lessons.length, 0);
-        const calculatedHeight = calculateCanvasHeight(data.lessons.length, totalLessons);
-        config.height = calculatedHeight;
+        config.height = calculateCanvasHeight(data.lessons.length, totalLessons);
 
         const canvas = createCanvas(config.width, config.height);
         const ctx = canvas.getContext('2d');

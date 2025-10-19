@@ -16,7 +16,7 @@ import type {
     UpdateChat,
     GroupFilter,
     LessonFilter
-} from '../types/database.js';
+} from '../types';
 
 const CACHE_KEYS = {
     ALL_DEPARTMENTS: 'departments:all',

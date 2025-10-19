@@ -5,8 +5,8 @@ import { getCurrentWeekDates, getCurrentWeekType } from '../utils/formatters.js'
 import { getWeekTypeForDate } from '../utils/week-calculator.js';
 import { getLessonsByGroupAndWeek } from './database.service.js';
 import { logger } from '../utils/logger.js';
-import type { Lesson } from '../types/database.js';
-import type { DaySchedule, LessonDisplay } from '../types/bot.js';
+import type { Lesson } from '../types';
+import type { DaySchedule, LessonDisplay } from '../types';
 
 export async function getWeekScheduleForGroup(groupId: number): Promise<DaySchedule[]> {
     const weekDates = getCurrentWeekDates();

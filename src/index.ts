@@ -105,4 +105,4 @@ function setupGracefulShutdown(bot: ReturnType<typeof createBot>): void {
 }
 
 // Запуск приложения
-startApplication();
+void startApplication();

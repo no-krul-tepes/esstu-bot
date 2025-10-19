@@ -2,7 +2,7 @@
 // Логирование запросов и обновлений
 
 import { logger } from '../utils/logger.js';
-import type { BotContext } from '../types/bot.js';
+import type { BotContext } from '../types';
 
 export async function loggingMiddleware(ctx: BotContext, next: () => Promise<void>): Promise<void> {
     const start = Date.now();

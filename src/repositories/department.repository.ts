@@ -3,8 +3,8 @@
 
 import { db } from '../config/database.js';
 import { logger } from '../utils/logger.js';
-import { DatabaseError, NotFoundError } from '../types/errors.js';
-import type { Department } from '../types/database.js';
+import { DatabaseError, NotFoundError } from '../types';
+import type { Department } from '../types';
 
 export async function getAllDepartments(): Promise<Department[]> {
     try {

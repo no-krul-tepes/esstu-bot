@@ -3,8 +3,8 @@
 
 import { db } from '../config/database.js';
 import { logger } from '../utils/logger.js';
-import { DatabaseError } from '../types/errors.js';
-import type { Lesson, LessonFilter } from '../types/database.js';
+import { DatabaseError } from '../types';
+import type { Lesson, LessonFilter } from '../types';
 
 export async function getLessonsByFilter(filter: LessonFilter): Promise<Lesson[]> {
     try {

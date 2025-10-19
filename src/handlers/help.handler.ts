@@ -2,7 +2,7 @@
 // Обработчик команды /help
 
 import { EMOJI } from '../config/constants.js';
-import type { BotContext } from '../types/bot.js';
+import type { BotContext } from '../types';
 
 export async function handleHelp(ctx: BotContext): Promise<void> {
     const helpMessage = `

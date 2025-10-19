@@ -3,8 +3,8 @@
 
 import { db } from '../config/database.js';
 import { logger } from '../utils/logger.js';
-import { DatabaseError, NotFoundError } from '../types/errors.js';
-import type { Chat, CreateChat, UpdateChat } from '../types/database.js';
+import { DatabaseError, NotFoundError } from '../types';
+import type { Chat, CreateChat, UpdateChat } from '../types';
 
 export async function createChat(chatData: CreateChat): Promise<Chat> {
     try {

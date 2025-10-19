@@ -2,7 +2,7 @@
 // Валидаторы входных данных с использованием Zod
 
 import { z } from 'zod';
-import { ValidationError } from '../types/errors.js';
+import { ValidationError } from '../types';
 
 // Схемы валидации
 export const chatIdSchema = z.number().int().positive();

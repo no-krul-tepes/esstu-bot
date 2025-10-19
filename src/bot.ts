@@ -12,8 +12,8 @@ import { handleHelp } from './handlers/help.handler.js';
 import { handleCallbackQuery } from './handlers/callback.handler.js';
 import { sendScheduleAfterRegistration } from './handlers/schedule.handler.js';
 import { logger } from './utils/logger.js';
-import { RegistrationStep } from './types/bot.js';
-import type { BotContext } from './types/bot.js';
+import { RegistrationStep } from './types';
+import type { BotContext } from './types';
 
 export function createBot(token: string): Bot<BotContext> {
     const bot = new Bot<BotContext>(token);

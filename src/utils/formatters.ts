@@ -1,10 +1,11 @@
 // src/utils/formatters.ts
 // Форматирование дат, времени и текста
+// noinspection GrazieInspection
 
 import { format, parseISO, startOfWeek, addDays } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { WEEK_DAYS } from '../config/constants.js';
-import type { WeekType } from '../types/database.js';
+import type { WeekType } from '../types';
 
 export function formatDate(date: Date | string): string {
     const dateObj = typeof date === 'string' ? parseISO(date) : date;
@@ -72,7 +73,7 @@ export function formatTeacherName(fullName: string | null): string {
         return `${parts[0]} ${parts[1]![0]}.`;
     }
 
-    // Фамилия И.О.
+    // Фамилия И. О.
     return `${parts[0]} ${parts[1]![0]}. ${parts[2]![0]}.`;
 }
 

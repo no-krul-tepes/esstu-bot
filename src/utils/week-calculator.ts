@@ -2,7 +2,7 @@
 // Утилиты для работы с четными/нечетными неделями
 
 import { startOfWeek, differenceInWeeks } from 'date-fns';
-import type { WeekType } from '../types/database.js';
+import type { WeekType } from '../types';
 
 const SEMESTER_START_DATE = new Date(2024, 8, 1); // 1 сентября 2024
 

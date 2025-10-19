@@ -3,7 +3,7 @@
 
 import { APP_CONFIG } from '../config/constants.js';
 import { validatePage } from '../utils/validators.js';
-import type { PaginatedResult, PaginationOptions } from '../types/bot.js';
+import type { PaginatedResult, PaginationOptions } from '../types';
 
 export function paginateItems<T>(
     items: T[],

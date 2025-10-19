@@ -11,7 +11,7 @@ interface CacheEntry<T> {
 
 class CacheService {
     private cache = new Map<string, CacheEntry<unknown>>();
-    private ttlMs: number;
+    private readonly ttlMs: number;
 
     constructor(ttlSeconds: number = APP_CONFIG.CACHE_TTL_SECONDS) {
         this.ttlMs = ttlSeconds * 1000;

@@ -3,8 +3,8 @@
 
 import { APP_CONFIG } from '../config/constants.js';
 import { logger } from '../utils/logger.js';
-import { AppError, ErrorCode } from '../types/errors.js';
-import type { BotContext } from '../types/bot.js';
+import { AppError, ErrorCode } from '../types';
+import type { BotContext } from '../types';
 
 interface RateLimitEntry {
     count: number;
@@ -13,8 +13,8 @@ interface RateLimitEntry {
 
 class RateLimiter {
     private limits = new Map<number, RateLimitEntry>();
-    private windowMs: number;
-    private maxRequests: number;
+    private readonly windowMs: number;
+    private readonly maxRequests: number;
 
     constructor(windowMs: number, maxRequests: number) {
         this.windowMs = windowMs;
@@ -110,10 +110,12 @@ export async function rateLimitMiddleware(
     await next();
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function resetRateLimit(userId: number): void {
     rateLimiter.reset(userId);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getRateLimiterStats() {
     return rateLimiter.getStats();
 }

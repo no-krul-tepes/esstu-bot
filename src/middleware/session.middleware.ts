@@ -3,7 +3,7 @@
 
 import { session } from 'grammy';
 import { RegistrationStep } from '../types';
-import type { BotContext, SessionData } from '../types/bot.js';
+import type { BotContext, SessionData } from '../types';
 
 export function createInitialSessionData(): SessionData {
     return {
