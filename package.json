@@ -1,0 +1,29 @@
+{
+  "name": "telegram-schedule-bot",
+  "version": "1.0.0",
+  "description": "Production-ready Telegram bot for displaying educational schedules",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir ./dist --target bun",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "dependencies": {
+    "grammy": "^1.21.1",
+    "postgres": "^3.4.3",
+    "@napi-rs/canvas": "^0.1.52",
+    "date-fns": "^3.3.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^20.11.5",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  }
+}
