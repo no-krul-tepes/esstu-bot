@@ -7,6 +7,7 @@ import { errorMiddleware } from './middleware/error.middleware.js';
 import { loggingMiddleware } from './middleware/logging.middleware.js';
 import { rateLimitMiddleware } from './middleware/rate-limit.middleware.js';
 import { handleStart } from './handlers/start.handler.js';
+import { handleSettings } from './handlers/settings.handler.js';
 import { handleSchedule } from './handlers/schedule.handler.js';
 import { handleHelp } from './handlers/help.handler.js';
 import { handleCallbackQuery } from './handlers/callback.handler.js';
@@ -36,22 +37,23 @@ export function createBot(token: string): Bot<BotContext> {
 }
 
 function registerCommands(bot: Bot<BotContext>): void {
-    // Команда /start
     bot.command('start', async (ctx) => {
         await handleStart(ctx);
     });
 
-    // Команда /schedule
     bot.command('schedule', async (ctx) => {
         await handleSchedule(ctx);
     });
 
-    // Команда /help
+    // Новая команда
+    bot.command('settings', async (ctx) => {
+        await handleSettings(ctx);
+    });
+
     bot.command('help', async (ctx) => {
         await handleHelp(ctx);
     });
 
-    // Обработчик неизвестных команд
     bot.on('message:text', async (ctx) => {
         const text = ctx.message.text;
 
@@ -71,9 +73,13 @@ function registerCallbackHandlers(bot: Bot<BotContext>): void {
     bot.on('callback_query:data', async (ctx) => {
         await handleCallbackQuery(ctx);
 
-        // После успешного выбора группы отправляем расписание
+        // Отправляем расписание только после завершения ПЕРВИЧНОЙ регистрации
+        // (не при смене группы из настроек)
+        const isChangingGroup = ctx.session.settings?.changingGroup === true;
+
         if (ctx.session.step === RegistrationStep.COMPLETED &&
-            ctx.session.selectedGroupId) {
+            ctx.session.selectedGroupId &&
+            !isChangingGroup) {
             await sendScheduleAfterRegistration(ctx);
         }
     });
@@ -87,6 +93,7 @@ export async function setupBotCommands(bot: Bot<BotContext>): Promise<void> {
         await bot.api.setMyCommands([
             { command: 'start', description: 'Начать регистрацию' },
             { command: 'schedule', description: 'Показать расписание' },
+            { command: 'settings', description: 'Настройки' },
             { command: 'help', description: 'Помощь' },
         ]);
 

@@ -72,14 +72,26 @@ export function validateExternalChatId(value: unknown): string {
 
 // Валидация callback data
 export function parseCallbackData(data: string): { action: string; value?: string } {
-    const parts = data.split(':');
+    // Разделяем только по первому двоеточию
+    const colonIndex = data.indexOf(':');
 
-    if (parts.length < 1 || parts.length > 2) {
+    if (colonIndex === -1) {
+        // Нет значения, только action
+        return {
+            action: data,
+        };
+    }
+
+    // Извлекаем action и остаток как value
+    const action = data.slice(0, colonIndex);
+    const value = data.slice(colonIndex + 1);
+
+    if (!action) {
         throw new ValidationError('Invalid callback data format', { data });
     }
 
     return {
-        action: parts[0]!,
-        value: parts[1],
+        action,
+        value: value || undefined,
     };
 }

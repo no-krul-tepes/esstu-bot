@@ -4,6 +4,7 @@
 import { Context, SessionFlavor } from 'grammy';
 import {WeekType} from "./database";
 
+// Расширяем SessionData
 export interface SessionData {
     step: RegistrationStep;
     selectedDepartmentId?: number;
@@ -11,8 +12,14 @@ export interface SessionData {
     selectedGroupId?: number;
     currentPage?: number;
     agreedToTerms?: boolean;
+    settings?: SettingsSessionData;
 }
 
+// Типы для времени уведомлений
+export interface NotificationTimeOption {
+    label: string;
+    value: string;
+}
 export enum RegistrationStep {
     START = 'start',
     TERMS_AGREEMENT = 'terms_agreement',
@@ -40,6 +47,19 @@ export enum CallbackAction {
     NAVIGATE_NEXT = 'next',
     NAVIGATE_PREV = 'prev',
     SHOW_SCHEDULE = 'schedule',
+    OPEN_SETTINGS = 'settings',
+    CHANGE_GROUP = 'change_group',
+    CHANGE_NOTIFICATION_TIME = 'change_time',
+    TOGGLE_NOTIFICATIONS = 'toggle_notify',
+    TOGGLE_EVERY_LESSON = 'toggle_every',
+    SET_NOTIFICATION_TIME = 'set_time',
+    CONFIRM_CHANGE_GROUP = 'confirm_change',
+    CANCEL_ACTION = 'cancel',
+}
+
+export interface SettingsSessionData {
+    changingGroup?: boolean;
+    newNotificationTime?: string;
 }
 
 // Типы для генерации изображений

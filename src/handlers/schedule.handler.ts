@@ -72,8 +72,7 @@ export async function handleSchedule(ctx: BotContext): Promise<void> {
 
         // Отправляем изображение
         await ctx.replyWithPhoto(new InputFile(imageBuffer), {
-            caption: `${EMOJI.CALENDAR} Расписание для группы ${group.name}\n` +
-                `📅 Неделя: ${weekType === 'even' ? 'Четная' : 'Нечетная'}`,
+            caption: `${EMOJI.CALENDAR} Расписание для группы ${group.name}`,
         });
 
         // Удаляем сообщение о загрузке

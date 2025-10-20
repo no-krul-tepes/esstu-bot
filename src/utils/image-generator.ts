@@ -5,7 +5,6 @@ import {createCanvas} from '@napi-rs/canvas';
 import {format} from 'date-fns';
 import {ru} from 'date-fns/locale';
 import {APP_CONFIG} from '../config/constants.js';
-import {getWeekTypeLabel} from './week-calculator.js';
 import {logger} from './logger.js';
 import type {DaySchedule, LessonDisplay, ScheduleImageData} from '../types';
 import {ImageGenerationError} from '../types';
@@ -121,7 +120,7 @@ function drawHeader(
     ctx.fillText(groupName, config.width / 2, 40);
 
     ctx.font = '20px Arial, sans-serif';
-    ctx.fillText(getWeekTypeLabel(weekType as 'even' | 'odd'), config.width / 2, 70);
+    ctx.fillText('Расписание на неделю', config.width / 2, 70);
 }
 
 function drawDaySchedule(

@@ -1,5 +1,5 @@
 // src/handlers/registration.handler.ts
-// Обработчики флоу регистрации
+// Обработчики флоу регистрации (ОБНОВЛЕННАЯ ВЕРСИЯ)
 
 import { MESSAGES, EMOJI } from '../config/constants.js';
 import { logger } from '../utils/logger.js';
@@ -53,7 +53,9 @@ export async function handleAgreeTerms(ctx: BotContext): Promise<void> {
 
 // Показать выбор подразделения
 export async function showDepartmentSelection(ctx: BotContext): Promise<void> {
-    if (!hasAgreedToTerms(ctx)) {
+    const isChangingGroup = ctx.session.settings?.changingGroup === true;
+
+    if (!isChangingGroup && !hasAgreedToTerms(ctx)) {
         await ctx.reply('⚠️ Сначала необходимо согласиться с правилами.');
         return;
     }
@@ -71,9 +73,11 @@ export async function showDepartmentSelection(ctx: BotContext): Promise<void> {
         });
 
         updateSessionStep(ctx, RegistrationStep.DEPARTMENT_SELECTION);
+
         logger.debug('Department selection shown', {
             userId: ctx.from?.id,
-            departmentsCount: departments.length
+            departmentsCount: departments.length,
+            isChangingGroup,
         });
     } catch (error) {
         logger.error('Failed to show department selection', { error });
@@ -110,7 +114,7 @@ export async function handleDepartmentSelection(ctx: BotContext): Promise<void> 
 
         logger.info('Department selected', {
             userId: ctx.from?.id,
-            departmentId
+            departmentId,
         });
     } catch (error) {
         logger.error('Failed to handle department selection', { error });
@@ -152,7 +156,7 @@ export async function handleCourseSelection(ctx: BotContext): Promise<void> {
         logger.info('Course selected', {
             userId: ctx.from?.id,
             departmentId,
-            course
+            course,
         });
     } catch (error) {
         logger.error('Failed to handle course selection', { error });
@@ -193,7 +197,7 @@ async function showGroupSelection(
             departmentId,
             course,
             page,
-            totalGroups: groups.length
+            totalGroups: groups.length,
         });
     } catch (error) {
         logger.error('Failed to show group selection', { error });
@@ -226,13 +230,33 @@ export async function handleGroupSelection(ctx: BotContext): Promise<void> {
         const groupId = validateGroupId(parseInt(value, 10));
         const externalChatId = chatId.toString();
 
+        // Проверяем, меняем ли мы группу из настроек
+        const isChangingGroup = ctx.session.settings?.changingGroup === true;
+
+        logger.debug('Group selection attempt', {
+            userId,
+            groupId,
+            externalChatId,
+            isChangingGroup,
+        });
+
+        if (isChangingGroup) {
+            // Логика смены группы обрабатывается в callback.handler.ts
+            // Здесь мы только логируем и продолжаем
+            logger.debug('Group change detected, will be handled by callback handler');
+            return;
+        }
+
+        // Первичная регистрация
         // Проверяем, не зарегистрирован ли уже этот чат
         const alreadyExists = await chatExists(externalChatId);
 
         if (alreadyExists) {
             await ctx.answerCallbackQuery('Этот чат уже зарегистрирован!');
             await ctx.editMessageText(
-                '✅ Вы уже зарегистрированы!\n\nИспользуйте /schedule для просмотра расписания.'
+                '✅ Вы уже зарегистрированы!\n\n' +
+                'Используйте /schedule для просмотра расписания.\n' +
+                'Используйте /settings для изменения настроек.'
             );
             return;
         }
@@ -265,10 +289,11 @@ export async function handleGroupSelection(ctx: BotContext): Promise<void> {
             userId,
             chatId: chat.chatid,
             groupId,
-            groupName: group.name
+            groupName: group.name,
         });
 
-        // Автоматически показываем расписание
+        // Сообщение о загрузке расписания
+        // Само расписание будет отправлено в bot.ts через callback handler
         await ctx.reply('Загружаю расписание... ⏳');
 
     } catch (error) {
@@ -280,6 +305,7 @@ export async function handleGroupSelection(ctx: BotContext): Promise<void> {
 // Обработчик навигации "Назад"
 export async function handleNavigateBack(ctx: BotContext): Promise<void> {
     const currentStep = ctx.session.step;
+    const isChangingGroup = ctx.session.settings?.changingGroup === true;
 
     await ctx.answerCallbackQuery();
 
@@ -298,13 +324,24 @@ export async function handleNavigateBack(ctx: BotContext): Promise<void> {
             break;
 
         default:
-            await ctx.reply('Используйте /start для начала регистрации');
+            if (isChangingGroup) {
+                // Отменяем смену группы
+                ctx.session.settings = undefined;
+                await ctx.deleteMessage();
+                await ctx.reply(
+                    '❌ Смена группы отменена.\n\n' +
+                    'Используйте /settings для повторной попытки.'
+                );
+            } else {
+                await ctx.reply('Используйте /start для начала регистрации');
+            }
             break;
     }
 
     logger.debug('Navigate back', {
         userId: ctx.from?.id,
-        fromStep: currentStep
+        fromStep: currentStep,
+        isChangingGroup,
     });
 }
 
@@ -325,6 +362,11 @@ export async function handleGroupPagination(ctx: BotContext, page: number): Prom
         userId: ctx.from?.id,
         page,
         departmentId,
-        course
+        course,
     });
+}
+
+// Вспомогательная функция для экспорта (используется в callback.handler)
+export function isChangingGroupMode(ctx: BotContext): boolean {
+    return ctx.session.settings?.changingGroup === true;
 }
