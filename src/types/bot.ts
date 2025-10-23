@@ -13,6 +13,7 @@ export interface SessionData {
     currentPage?: number;
     agreedToTerms?: boolean;
     settings?: SettingsSessionData;
+    shouldSendSchedule?: boolean;
 }
 
 // Типы для времени уведомлений

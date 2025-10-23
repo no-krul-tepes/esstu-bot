@@ -76,11 +76,14 @@ function registerCallbackHandlers(bot: Bot<BotContext>): void {
         // Отправляем расписание только после завершения ПЕРВИЧНОЙ регистрации
         // (не при смене группы из настроек)
         const isChangingGroup = ctx.session.settings?.changingGroup === true;
+        const shouldSendSchedule = ctx.session.shouldSendSchedule === true;
 
-        if (ctx.session.step === RegistrationStep.COMPLETED &&
+        if (shouldSendSchedule &&
+            ctx.session.step === RegistrationStep.COMPLETED &&
             ctx.session.selectedGroupId &&
             !isChangingGroup) {
             await sendScheduleAfterRegistration(ctx);
+            ctx.session.shouldSendSchedule = false;
         }
     });
 

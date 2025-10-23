@@ -230,7 +230,7 @@ function drawLesson(
         ctx.fillStyle = config.colors.text;
         ctx.font = '14px Arial, sans-serif';
         const teacherText = truncateText(ctx, lesson.teacher, width - 200);
-        ctx.fillText(`👨‍🏫 ${teacherText}`, x + 70, y + 68);
+        ctx.fillText(`${teacherText}`, x + 70, y + 68);
     }
 
     if (lesson.cabinet) {
@@ -238,7 +238,7 @@ function drawLesson(
         ctx.font = 'bold 16px Arial, sans-serif';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
-        ctx.fillText(`🚪 ${lesson.cabinet}`, x + width - 15, y + 45);
+        ctx.fillText(`${lesson.cabinet}`, x + width - 15, y + 45);
     }
 
     return y + config.lessonHeight + 10;

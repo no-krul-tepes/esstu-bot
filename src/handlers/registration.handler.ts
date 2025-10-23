@@ -292,9 +292,8 @@ export async function handleGroupSelection(ctx: BotContext): Promise<void> {
             groupName: group.name,
         });
 
-        // Сообщение о загрузке расписания
-        // Само расписание будет отправлено в bot.ts через callback handler
-        await ctx.reply('Загружаю расписание... ⏳');
+        // Помечаем, что нужно отправить расписание только после первичной регистрации
+        ctx.session.shouldSendSchedule = true;
 
     } catch (error) {
         logger.error('Failed to handle group selection', { error });

@@ -185,6 +185,8 @@ async function handleGroupChangeComplete(ctx: BotContext, newGroupId: number): P
             'Используйте команду /schedule'
         );
 
+        ctx.session.shouldSendSchedule = false;
+
         // Очищаем временные данные сессии
         ctx.session.settings = undefined;
         ctx.session.selectedDepartmentId = undefined;
@@ -211,6 +213,7 @@ async function handleGroupChangeComplete(ctx: BotContext, newGroupId: number): P
         );
 
         // Очищаем сессию при ошибке
+        ctx.session.shouldSendSchedule = false;
         ctx.session.settings = undefined;
 
         throw error;
