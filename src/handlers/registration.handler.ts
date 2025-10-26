@@ -18,6 +18,7 @@ import {
     getGroupsByDepartmentAndCourse,
     getGroupById,
     createChat,
+    countChatsByGroupId,
     chatExists,
 } from '../services/database.service.js';
 import { paginateItems } from '../services/pagination.service.js';
@@ -26,6 +27,7 @@ import {
     createCoursesKeyboard,
     createGroupsKeyboard,
 } from '../keyboards/navigation.keyboard.js';
+import { triggerGroupParsing } from '../services/parse.service.js';
 import type { BotContext } from '../types';
 
 // Обработчик согласия с правилами
@@ -263,6 +265,8 @@ export async function handleGroupSelection(ctx: BotContext): Promise<void> {
 
         // Получаем информацию о группе
         const group = await getGroupById(groupId);
+        const existingSubscribers = await countChatsByGroupId(groupId);
+        const shouldTriggerParser = existingSubscribers === 0;
 
         // Создаем запись в БД
         const chat = await createChat({
@@ -273,6 +277,10 @@ export async function handleGroupSelection(ctx: BotContext): Promise<void> {
             isnotificationenabled: true,
             notifyoneverylesson: false,
         });
+
+        if (shouldTriggerParser) {
+            await triggerGroupParsing(groupId);
+        }
 
         setSelectedGroup(ctx, groupId);
         updateSessionStep(ctx, RegistrationStep.COMPLETED);

@@ -22,10 +22,11 @@ import {
     handleConfirmChangeGroup,
     handleCancelAction,
 } from './settings.handler.js';
-import {  getChatByExternalId, getGroupById } from '../services/database.service.js';
+import { getChatByExternalId, getGroupById, countChatsByGroupId } from '../services/database.service.js';
 import { MESSAGES } from '../config/constants.js';
 import type { BotContext } from '../types';
-import {changeGroup} from "../services/settings.service";
+import { changeGroup } from '../services/settings.service.js';
+import { triggerGroupParsing } from '../services/parse.service.js';
 
 export async function handleCallbackQuery(ctx: BotContext): Promise<void> {
     const callbackData = ctx.callbackQuery?.data;
@@ -88,6 +89,7 @@ export async function handleCallbackQuery(ctx: BotContext): Promise<void> {
                 }
                 break;
 
+
             // Settings actions
             case CallbackAction.TOGGLE_NOTIFICATIONS:
                 await handleToggleNotifications(ctx);
@@ -139,6 +141,8 @@ async function handleGroupChangeComplete(ctx: BotContext, newGroupId: number): P
     }
 
     try {
+        await ctx.answerCallbackQuery('⏳ Меняем группу...');
+
         const externalChatId = chatId.toString();
 
         logger.info('Completing group change', {
@@ -165,11 +169,16 @@ async function handleGroupChangeComplete(ctx: BotContext, newGroupId: number): P
             return;
         }
 
+        const existingSubscribers = await countChatsByGroupId(newGroupId);
+        const shouldTriggerParser = existingSubscribers === 0;
+
         // Меняем группу в БД
         await changeGroup(externalChatId, newGroupId);
         const newGroup = await getGroupById(newGroupId);
 
-        await ctx.answerCallbackQuery('✅ Группа изменена!');
+        if (shouldTriggerParser) {
+            await triggerGroupParsing(newGroupId);
+        }
 
         // Удаляем предыдущее сообщение
         await ctx.deleteMessage();
@@ -215,7 +224,5 @@ async function handleGroupChangeComplete(ctx: BotContext, newGroupId: number): P
         // Очищаем сессию при ошибке
         ctx.session.shouldSendSchedule = false;
         ctx.session.settings = undefined;
-
-        throw error;
     }
 }

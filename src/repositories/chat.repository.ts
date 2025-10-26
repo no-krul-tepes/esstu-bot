@@ -179,6 +179,24 @@ export async function deleteChat(chatId: number): Promise<void> {
     }
 }
 
+export async function countChatsByGroupId(groupId: number): Promise<number> {
+    try {
+        const [result] = await db<[{ count: string }]>`
+      SELECT COUNT(*)::text as count
+      FROM Chat
+      WHERE groupid = ${groupId}
+    `;
+
+        const count = parseInt(result?.count ?? '0', 10);
+
+        logger.debug('Counted chats by group', { groupId, count });
+        return count;
+    } catch (error) {
+        logger.error('Failed to count chats by group', { groupId, error });
+        throw new DatabaseError('Failed to count chats by group', { groupId, error });
+    }
+}
+
 export async function chatExistsByExternalId(externalChatId: string): Promise<boolean> {
     try {
         const [result] = await db<[{ exists: boolean }]>`

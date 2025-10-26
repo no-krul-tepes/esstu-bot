@@ -84,6 +84,7 @@ export interface LessonDisplay {
     endTime: string;
     teacher: string | null;
     cabinet: string | null;
+    type: string | null;
 }
 
 // Типы для пагинации

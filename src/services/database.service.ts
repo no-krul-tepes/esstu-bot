@@ -125,6 +125,10 @@ export async function deleteChat(chatId: number): Promise<void> {
     return chatRepo.deleteChat(chatId);
 }
 
+export async function countChatsByGroupId(groupId: number): Promise<number> {
+    return chatRepo.countChatsByGroupId(groupId);
+}
+
 export async function chatExists(externalChatId: string): Promise<boolean> {
     return chatRepo.chatExistsByExternalId(externalChatId);
 }

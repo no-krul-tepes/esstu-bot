@@ -88,6 +88,7 @@ function transformLessonToDisplay(lesson: Lesson): LessonDisplay {
         endTime: lesson.endtime.slice(0, 5),
         teacher: lesson.teachername,
         cabinet: lesson.cabinetnumber,
+        type: lesson.lesson_type,
     };
 }
 

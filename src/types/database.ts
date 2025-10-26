@@ -47,6 +47,7 @@ export interface Lesson {
     endtime: string;
     teachername: string | null;
     cabinetnumber: string | null;
+    lesson_type: string | null;
     weektype: WeekType;
     rawtext: string | null;
     dateadded: Date;
