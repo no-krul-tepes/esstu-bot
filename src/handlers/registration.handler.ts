@@ -66,7 +66,7 @@ export async function showDepartmentSelection(ctx: BotContext): Promise<void> {
         const departments = await getAllDepartments();
 
         if (departments.length === 0) {
-            await ctx.reply('❌ Подразделения не найдены. Обратитесь к администратору.');
+            await ctx.reply('❌ Направления не найдены. Обратитесь к администратору.');
             return;
         }
 
@@ -108,7 +108,7 @@ export async function handleDepartmentSelection(ctx: BotContext): Promise<void> 
 
         await ctx.answerCallbackQuery();
         await ctx.editMessageText(
-            `${EMOJI.BUILDING} Подразделение выбрано\n\n${MESSAGES.COURSE_SELECTION.TEXT}`,
+            `${EMOJI.BUILDING} Направление выбрано\n\n${MESSAGES.COURSE_SELECTION.TEXT}`,
             { reply_markup: createCoursesKeyboard() }
         );
 
@@ -133,7 +133,7 @@ export async function handleCourseSelection(ctx: BotContext): Promise<void> {
     const departmentId = ctx.session.selectedDepartmentId;
 
     if (!departmentId) {
-        await ctx.answerCallbackQuery('Ошибка: сначала выберите подразделение');
+        await ctx.answerCallbackQuery('Ошибка: сначала выберите направление');
         return;
     }
 

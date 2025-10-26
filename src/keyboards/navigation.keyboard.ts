@@ -16,7 +16,7 @@ export function createTermsKeyboard(): InlineKeyboard {
 
 export function createDepartmentsKeyboard(departments: Department[]): InlineKeyboard {
     const keyboard = new InlineKeyboard();
-    const buttonsPerRow = APP_CONFIG.BUTTONS_PER_ROW;
+    const buttonsPerRow = 1;
 
     for (let i = 0; i < departments.length; i += buttonsPerRow) {
         const row = departments.slice(i, i + buttonsPerRow);
