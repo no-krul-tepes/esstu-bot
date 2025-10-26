@@ -9,8 +9,12 @@ import type { Lesson, LessonFilter } from '../types';
 export async function getLessonsByFilter(filter: LessonFilter): Promise<Lesson[]> {
     try {
         let query;
+        const startDate = filter.startDate ?? null;
+        const endDateExclusive = filter.endDate
+            ? addOneDay(filter.endDate)
+            : null;
 
-        if (filter.startDate && filter.endDate && filter.weekType) {
+        if (startDate && endDateExclusive && filter.weekType) {
             query = db<Lesson[]>`
         SELECT 
           lessonid,
@@ -30,12 +34,12 @@ export async function getLessonsByFilter(filter: LessonFilter): Promise<Lesson[]
           lastupdated
         FROM Lesson
         WHERE groupid = ${filter.groupId}
-          AND lessondate >= ${filter.startDate}
-          AND lessondate <= ${filter.endDate}
+          AND lessondate >= ${startDate}
+          AND lessondate < ${endDateExclusive}
           AND weektype = ${filter.weekType}
         ORDER BY lessondate ASC, lessonnumber ASC
       `;
-        } else if (filter.startDate && filter.endDate) {
+        } else if (startDate && endDateExclusive) {
             query = db<Lesson[]>`
         SELECT 
           lessonid,
@@ -55,8 +59,8 @@ export async function getLessonsByFilter(filter: LessonFilter): Promise<Lesson[]
           lastupdated
         FROM Lesson
         WHERE groupid = ${filter.groupId}
-          AND lessondate >= ${filter.startDate}
-          AND lessondate <= ${filter.endDate}
+          AND lessondate >= ${startDate}
+          AND lessondate < ${endDateExclusive}
         ORDER BY lessondate ASC, lessonnumber ASC
       `;
         } else if (filter.weekType) {
@@ -116,6 +120,12 @@ export async function getLessonsByFilter(filter: LessonFilter): Promise<Lesson[]
     }
 }
 
+function addOneDay(date: Date): Date {
+    const nextDay = new Date(date);
+    nextDay.setDate(nextDay.getDate() + 1);
+    return nextDay;
+}
+
 export async function getLessonsByGroupAndWeek(
     groupId: number,
     weekDates: Date[]
@@ -127,6 +137,7 @@ export async function getLessonsByGroupAndWeek(
 
         const startDate = weekDates[0]!;
         const endDate = weekDates[weekDates.length - 1]!;
+        const endDateExclusive = addOneDay(endDate);
 
         const lessons = await db<Lesson[]>`
       SELECT 
@@ -148,7 +159,7 @@ export async function getLessonsByGroupAndWeek(
       FROM Lesson
       WHERE groupid = ${groupId}
         AND lessondate >= ${startDate}
-        AND lessondate <= ${endDate}
+        AND lessondate < ${endDateExclusive}
       ORDER BY lessondate ASC, lessonnumber ASC
     `;
 

@@ -5,6 +5,7 @@
 import { format, parseISO, startOfWeek, addDays } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { WEEK_DAYS } from '../config/constants.js';
+import { getCurrentWeekType as getAcademicWeekType } from './week-calculator.js';
 import type { WeekType } from '../types';
 
 export function formatDate(date: Date | string): string {
@@ -36,16 +37,7 @@ export function getCurrentWeekDates(): Date[] {
     return Array.from({ length: 6 }, (_, index) => addDays(monday, index));
 }
 
-export function getCurrentWeekType(): WeekType {
-    const now = new Date();
-    const startOfYear = new Date(now.getFullYear(), 0, 1);
-    const daysSinceStart = Math.floor(
-        (now.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)
-    );
-    const weekNumber = Math.ceil((daysSinceStart + startOfYear.getDay() + 1) / 7);
-
-    return weekNumber % 2 === 0 ? 'even' : 'odd';
-}
+export const getCurrentWeekType = (): WeekType => getAcademicWeekType();
 
 export function escapeMarkdown(text: string): string {
     return text.replace(/[_*[\]()~`>#+=|{}.!-]/g, '\\$&');

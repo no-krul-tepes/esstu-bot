@@ -2,8 +2,8 @@
 // Бизнес-логика для работы с расписанием
 
 import { format } from 'date-fns';
-import { getCurrentWeekDates, getCurrentWeekType } from '../utils/formatters.js';
-import { getWeekTypeForDate } from '../utils/week-calculator.js';
+import { getCurrentWeekDates } from '../utils/formatters.js';
+import { getCurrentWeekType, getWeekTypeForDate } from '../utils/week-calculator.js';
 import { getLessonsByGroupAndWeek } from './database.service.js';
 import { logger } from '../utils/logger.js';
 import type { Lesson } from '../types';
