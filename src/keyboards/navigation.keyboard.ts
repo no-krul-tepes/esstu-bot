@@ -63,12 +63,18 @@ export function createGroupsKeyboard(
     const keyboard = new InlineKeyboard();
     const { items: groups, pagination, hasNext, hasPrev } = paginatedGroups;
 
-    // Кнопки групп (по 1 в ряд для удобства чтения)
-    for (const group of groups) {
-        keyboard.text(
-            group.name,
-            `${CallbackAction.SELECT_GROUP}:${group.groupid}`
-        );
+    const buttonsPerRow = Math.max(1, APP_CONFIG.BUTTONS_PER_ROW);
+
+    for (let i = 0; i < groups.length; i += buttonsPerRow) {
+        const row = groups.slice(i, i + buttonsPerRow);
+
+        for (const group of row) {
+            keyboard.text(
+                group.name,
+                `${CallbackAction.SELECT_GROUP}:${group.groupid}`
+            );
+        }
+
         keyboard.row();
     }
 

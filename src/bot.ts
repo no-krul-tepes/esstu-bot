@@ -10,6 +10,7 @@ import { handleStart } from './handlers/start.handler.js';
 import { handleSettings } from './handlers/settings.handler.js';
 import { handleSchedule } from './handlers/schedule.handler.js';
 import { handleHelp } from './handlers/help.handler.js';
+import { handleUnsubscribe } from './handlers/unsubscribe.handler.js';
 import { handleCallbackQuery } from './handlers/callback.handler.js';
 import { sendScheduleAfterRegistration } from './handlers/schedule.handler.js';
 import { logger } from './utils/logger.js';
@@ -52,6 +53,10 @@ function registerCommands(bot: Bot<BotContext>): void {
 
     bot.command('help', async (ctx) => {
         await handleHelp(ctx);
+    });
+
+    bot.command('unsubscribe', async (ctx) => {
+        await handleUnsubscribe(ctx);
     });
 
     bot.on('message:text', async (ctx) => {
@@ -98,6 +103,7 @@ export async function setupBotCommands(bot: Bot<BotContext>): Promise<void> {
             { command: 'schedule', description: 'Показать расписание' },
             { command: 'settings', description: 'Настройки' },
             { command: 'help', description: 'Помощь' },
+            { command: 'unsubscribe', description: 'Удалить данные и отписаться' },
         ]);
 
         logger.info('Bot commands set successfully');
