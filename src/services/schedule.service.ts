@@ -1,6 +1,7 @@
 // src/services/schedule.service.ts
 // Бизнес-логика для работы с расписанием
 
+import { format } from 'date-fns';
 import { getCurrentWeekDates, getCurrentWeekType } from '../utils/formatters.js';
 import { getWeekTypeForDate } from '../utils/week-calculator.js';
 import { getLessonsByGroupAndWeek } from './database.service.js';
@@ -25,7 +26,7 @@ export async function getWeekScheduleForGroup(groupId: number): Promise<DaySched
             continue;
         }
 
-        const dateKey = lesson.lessondate.toISOString().split('T')[0]!;
+        const dateKey = formatDateKey(lesson.lessondate);
         const dayLessons = lessonsByDay.get(dateKey) ?? [];
         dayLessons.push(lesson);
         lessonsByDay.set(dateKey, dayLessons);
@@ -33,7 +34,7 @@ export async function getWeekScheduleForGroup(groupId: number): Promise<DaySched
 
     // Формируем расписание по дням недели
     const schedule: DaySchedule[] = weekDates.map((date, index) => {
-        const dateKey = date.toISOString().split('T')[0]!;
+        const dateKey = formatDateKey(date);
         const dayLessons = lessonsByDay.get(dateKey) ?? [];
 
         // Сортируем уроки по номеру
@@ -65,7 +66,7 @@ export async function getDayScheduleForGroup(
     const filteredLessons = lessons
         .filter(lesson =>
             lesson.weektype === weekType &&
-            lesson.lessondate.toDateString() === date.toDateString()
+            formatDateKey(lesson.lessondate) === formatDateKey(date)
         )
         .sort((a, b) => a.lessonnumber - b.lessonnumber);
 
@@ -101,6 +102,10 @@ function getDayNameByIndex(index: number): string {
     ];
 
     return dayNames[index - 1] ?? 'Неизвестный день';
+}
+
+function formatDateKey(date: Date): string {
+    return format(date, 'yyyy-MM-dd');
 }
 
 export function hasLessonsInSchedule(schedule: DaySchedule[]): boolean {
