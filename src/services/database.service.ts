@@ -24,7 +24,12 @@ const CACHE_KEYS = {
     GROUP_BY_ID: (id: number) => `group:${id}`,
     GROUPS_BY_FILTER: (filter: GroupFilter) =>
         `groups:${filter.departmentId ?? 'all'}:${filter.course ?? 'all'}:${filter.isActive ?? 'all'}`,
+    LESSONS_BY_GROUP_WEEK: (groupId: number, startDate: string, endDate: string) =>
+        `lessons:${groupId}:${startDate}:${endDate}`,
 } as const;
+
+// Cache TTL for lessons (5 minutes - schedules change infrequently)
+const LESSONS_CACHE_TTL_SECONDS = 300;
 
 // Department Services
 export async function getAllDepartments(): Promise<Department[]> {
@@ -95,7 +100,24 @@ export async function getLessonsByGroupAndWeek(
     groupId: number,
     weekDates: Date[]
 ): Promise<Lesson[]> {
-    return lessonRepo.getLessonsByGroupAndWeek(groupId, weekDates);
+    if (weekDates.length === 0) {
+        return [];
+    }
+
+    const startDate = weekDates[0]!.toISOString().split('T')[0]!;
+    const endDate = weekDates[weekDates.length - 1]!.toISOString().split('T')[0]!;
+    const cacheKey = CACHE_KEYS.LESSONS_BY_GROUP_WEEK(groupId, startDate, endDate);
+
+    const cached = cacheService.get<Lesson[]>(cacheKey);
+    if (cached) {
+        logger.debug('Lessons cache hit', { groupId, startDate, endDate });
+        return cached;
+    }
+
+    const lessons = await lessonRepo.getLessonsByGroupAndWeek(groupId, weekDates);
+    cacheService.set(cacheKey, lessons, LESSONS_CACHE_TTL_SECONDS);
+    logger.debug('Lessons cached', { groupId, startDate, endDate, count: lessons.length });
+    return lessons;
 }
 
 // Chat Services

@@ -25,7 +25,8 @@ function parseDatabaseUrl(url: string): DatabaseConfig {
             database: parsed.pathname.slice(1),
             username: parsed.username,
             password: parsed.password,
-            maxConnections: 10,
+            // Optimized for better performance - increased from 10 to 20
+            maxConnections: parseInt(process.env.DB_MAX_CONNECTIONS || '20', 10),
             idleTimeout: 30,
             connectionTimeout: 10,
         };

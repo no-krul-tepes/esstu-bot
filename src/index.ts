@@ -5,6 +5,7 @@ import { createBot, setupBotCommands, stopBot } from './bot.js';
 import { checkDatabaseHealth, closeDatabaseConnection } from './config/database.js';
 import { logger } from './utils/logger.js';
 import { errorHandler } from './middleware/error.middleware.js';
+import { startNotificationScheduler, stopNotificationScheduler } from './services/notification-scheduler.service.js';
 
 async function validateEnvironment(): Promise<void> {
     const requiredEnvVars = ['BOT_TOKEN', 'DATABASE_URL'];
@@ -60,6 +61,10 @@ async function startApplication(): Promise<void> {
             },
         });
 
+        // Запускаем планировщик уведомлений
+        logger.info('Starting notification scheduler...');
+        startNotificationScheduler(bot);
+
         // Обработка graceful shutdown
         setupGracefulShutdown(bot);
 
@@ -74,6 +79,9 @@ function setupGracefulShutdown(bot: ReturnType<typeof createBot>): void {
         logger.info(`Received ${signal}, shutting down gracefully...`);
 
         try {
+            // Останавливаем планировщик уведомлений
+            stopNotificationScheduler();
+
             // Останавливаем бота
             await stopBot(bot);
 
